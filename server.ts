@@ -107,8 +107,8 @@ app.post("/api/chat/stream", async (req, res) => {
   }
 });
 
-// Vercel production mode
-if (process.env.VERCEL || process.env.NODE_ENV === "production") {
+// Production static file serving (local production only, Vercel handles this via vercel.json)
+if (process.env.NODE_ENV === "production" && !process.env.VERCEL) {
   const distPath = path.join(process.cwd(), 'dist');
   app.use(express.static(distPath));
   app.get('*', (req, res) => {
