@@ -1,0 +1,6 @@
+{
+  "name": "Pwof Ou Ayiti",
+  "description": "Yon asistan edikatif ki ede elèv ayisyen prepare pou Egzamen Leta (9ème AF, Bacc) dapre kourikoulòm ofisyèl MENFP a.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
