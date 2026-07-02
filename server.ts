@@ -7,9 +7,13 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const app = express();
-const PORT = 8080;
+const PORT = process.env.PORT ? parseInt(process.env.PORT) : 8080;
 
 app.use(express.json());
+
+app.get("/favicon.ico", (req, res) => {
+  res.sendFile(path.join(process.cwd(), "public", "icon.jpg"));
+});
 
 const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY,
@@ -103,25 +107,30 @@ app.post("/api/chat/stream", async (req, res) => {
   }
 });
 
+// Vercel production mode
+if (process.env.VERCEL || process.env.NODE_ENV === "production") {
+  const distPath = path.join(process.cwd(), 'dist');
+  app.use(express.static(distPath));
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(distPath, 'index.html'));
+  });
+}
+
 async function startServer() {
-  // Vite middleware for development
-  if (process.env.NODE_ENV !== "production") {
-    const vite = await createViteServer({
-      server: { middlewareMode: true },
-      appType: "spa",
-    });
-    app.use(vite.middlewares);
-  } else {
-    const distPath = path.join(process.cwd(), 'dist');
-    app.use(express.static(distPath));
-    app.get('*', (req, res) => {
-      res.sendFile(path.join(distPath, 'index.html'));
-    });
-  }
+  const vite = await createViteServer({
+    server: { middlewareMode: true },
+    appType: "spa",
+  });
+  app.use(vite.middlewares);
 
   app.listen(PORT, "0.0.0.0", () => {
     console.log(`Sèvè a ap mache sou http://localhost:${PORT}`);
   });
 }
 
-startServer();
+if (!process.env.VERCEL) {
+  startServer();
+}
+
+export { ai, SYSTEM_INSTRUCTION };
+export default app;
