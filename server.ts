@@ -107,15 +107,6 @@ app.post("/api/chat/stream", async (req, res) => {
   }
 });
 
-// Production static file serving (local production only, Vercel handles this via vercel.json)
-if (process.env.NODE_ENV === "production" && !process.env.VERCEL) {
-  const distPath = path.join(process.cwd(), 'dist');
-  app.use(express.static(distPath));
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(distPath, 'index.html'));
-  });
-}
-
 async function startServer() {
   const vite = await createViteServer({
     server: { middlewareMode: true },
@@ -128,9 +119,4 @@ async function startServer() {
   });
 }
 
-if (!process.env.VERCEL) {
-  startServer();
-}
-
-export { ai, SYSTEM_INSTRUCTION };
-export default app;
+startServer();
